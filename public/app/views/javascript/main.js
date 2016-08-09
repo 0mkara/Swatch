@@ -47,6 +47,7 @@ function gotStream(stream) {
     trace('Received local stream');
     localVideo.srcObject = stream;
     localStream = stream;
+    console.log(localStream);
     var videoTracks = localStream.getVideoTracks();
     var audioTracks = localStream.getAudioTracks();
     if (videoTracks.length > 0) {

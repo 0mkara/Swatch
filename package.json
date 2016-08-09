@@ -24,6 +24,7 @@
   "homepage": "https://github.com/0mkara/swatch#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "opentok": "^2.3.2"
   }
 }
