@@ -20,7 +20,7 @@ startButton.onclick = start;
 
 function start() {
     startButton.disabled = true;
-    navigator.getUserMedia({
+    navigator.mediaDevices.getUserMedia({
         audio: true,
         video: true
     }).then(gotStream)
