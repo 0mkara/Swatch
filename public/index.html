@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Swatch</title>
+    <base href='/'>
+
+    <!-- Stylesheets here -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+
+    <!-- bootstrap files -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> <!-- jQuery library -->
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> <!-- Latest compiled JavaScript -->
+</head>
+
+<body>
+    <header>
+        <div class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                </div>
+                <ul class="nav navbar-nav nav-tabs">
+                    <li ng-if="main.loggedIn"><a href="/">Swatch</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div ng-view>
+            <video id="localVideo" autoplay muted></video>
+            <video id="remoteVideo" autoplay></video>
+            <div>
+                <button id="startButton">Start</button>
+                <button id="callButton">Call</button>
+                <button id="hangupButton">Hang Up</button>
+            </div>
+        </div>
+    </main>
+    <script type="text/javascript" src="/javascript/main.js"></script>
+</body>
+</html>
