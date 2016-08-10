@@ -4,12 +4,12 @@ angular.module('appRoutes', ['ngRoute'])
 
     $routeProvider
 
-        .when('/', {
+        .when('/room/:roomID', {
             templateUrl: 'app/views/pages/guest.html',
             controller: 'MainController',
             controllerAs: 'main'
         })
-        .when('/qfaAz8Pav8bPG62vbUYcsh8rJzf4EqhA', {
+        .when('/', {
             templateUrl: 'app/views/pages/host.html',
             controller: 'MainController',
             controllerAs: 'main'
