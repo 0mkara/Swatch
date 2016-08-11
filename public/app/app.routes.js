@@ -4,8 +4,8 @@ angular.module('appRoutes', ['ngRoute'])
 
     $routeProvider
 
-        .when('/room/:roomID', {
-            templateUrl: 'app/views/pages/guest.html',
+        .when('/:roomId', {
+            templateUrl: 'app/views/pages/room.html',
             controller: 'MainController',
             controllerAs: 'main'
         })
