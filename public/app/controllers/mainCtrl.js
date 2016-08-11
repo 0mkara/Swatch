@@ -7,7 +7,8 @@ angular.module('mainCtrl', ['basicService'])
     var hangupButton = document.getElementById('hangupButton');
 
     var startTime;
-    var localStream;
+    vm.localStream = {};
+    vm.remoteStream = {};
     var localVideo = document.getElementById('localVideo');
     var remoteVideo = document.getElementById('remoteVideo');
     var constraints = {
@@ -29,6 +30,7 @@ angular.module('mainCtrl', ['basicService'])
     if(room) {
         socketio.emit('create or join', room);
     }
+    vm.roomUrl = window.location.origin + '/' + room;
 
     /***
         Functions to interact with user and setup a video session
@@ -43,8 +45,8 @@ angular.module('mainCtrl', ['basicService'])
         callButton.disabled = true;
         hangupButton.disabled = false;
         startTime = window.performance.now();
-        var videoTracks = localStream.getVideoTracks();
-        var audioTracks = localStream.getAudioTracks();
+        var videoTracks = vm.localStream.getVideoTracks();
+        var audioTracks = vm.localStream.getAudioTracks();
         if (videoTracks.length > 0) {
             Basics.trace('Using video device: ' + videoTracks[0].label);
         }
@@ -62,7 +64,7 @@ angular.module('mainCtrl', ['basicService'])
             socketio.emit('ipaddr');
         }
         // Publish video to session
-        vm.datachannel.addStream(localStream);
+        //vm.datachannel.send(vm.localStream);
     }
 
     /***
@@ -86,6 +88,7 @@ angular.module('mainCtrl', ['basicService'])
             console.log('Got answer.');
             peerConn.setRemoteDescription(new RTCSessionDescription(message), function() {}, logError);
         } else if (message.type === 'candidate') {
+            console.log('Got candidate.');
             peerConn.addIceCandidate(new RTCIceCandidate({
                 candidate: message.candidate
             }));
@@ -94,6 +97,7 @@ angular.module('mainCtrl', ['basicService'])
         }
     }
     function createPeerConnection(isInitiator, config) {
+        // if not initiator then pc2 else pc1
         console.log('Creating Peer connection as initiator?', isInitiator, 'config:', config);
         peerConn = new RTCPeerConnection(config);
         console.log(peerConn);
@@ -112,6 +116,13 @@ angular.module('mainCtrl', ['basicService'])
                 console.log('End of candidates.');
             }
         };
+        peerConn.oniceconnectionstatechange = function(event) {
+            console.log('icecandidate state change event:', event);
+        }
+        peerConn.onaddstream = function(event) {
+            console.log('onaddstream:', event);
+            document.getElementById('remoteVideo').srcObject = event.stream;
+        };
 
         if (isInitiator) {
             console.log('Creating Data Channel');
@@ -119,6 +130,8 @@ angular.module('mainCtrl', ['basicService'])
             onDataChannelCreated(vm.datachannel);
             console.log('Creating an offer');
             peerConn.createOffer(onLocalSessionCreated, logError);
+            console.log(vm.localStream);
+            peerConn.addStream(vm.localStream);
         } else {
             peerConn.ondatachannel = function(event) {
                 console.log('ondatachannel:', event.channel);
@@ -127,6 +140,11 @@ angular.module('mainCtrl', ['basicService'])
             };
         }
     }
+    function gotRemoteStream(e) {
+        remoteVideo.srcObject = e.stream;
+        trace('pc2 received remote stream');
+    }
+
     function onDataChannelCreated(channel) {
         console.log('onDataChannelCreated:', channel);
         channel.onopen = function() {
@@ -139,7 +157,7 @@ angular.module('mainCtrl', ['basicService'])
         var streamURL = window.URL.createObjectURL(stream);
         console.log('getUserMedia video stream URL:', streamURL);
         document.getElementById('localVideo').srcObject = stream;
-        localStream = stream;
+        vm.localStream = stream;
         document.getElementById('callButton').disabled = false;
     }
     function randomToken() {
