@@ -1,0 +1,10 @@
+<div>
+    <h1>Welcome to room {{ main.roomID }}</h1>
+    <video id="localVideo" src="main.localSource" autoplay muted></video>
+    <video id="remoteVideo" src="main.remoteSource" autoplay></video>
+    <div>
+        <button id="startButton" ng-click="main.startSession()">Start</button>
+        <button id="callButton" ng-click="main.broadcastSession()">Broadcast</button>
+        <button id="hangupButton" ng-click="main.stopSession()">Stop</button>
+    </div>
+</div>
