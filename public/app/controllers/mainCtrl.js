@@ -123,6 +123,9 @@ angular.module('mainCtrl', ['basicService'])
             console.log('onaddstream:', event);
             document.getElementById('remoteVideo').srcObject = event.stream;
         };
+        if(vm.localStream.active == true) {
+            peerConn.addStream(vm.localStream);
+        }
 
         if (isInitiator) {
             console.log('Creating Data Channel');
@@ -131,7 +134,6 @@ angular.module('mainCtrl', ['basicService'])
             console.log('Creating an offer');
             peerConn.createOffer(onLocalSessionCreated, logError);
             console.log(vm.localStream);
-            peerConn.addStream(vm.localStream);
         } else {
             peerConn.ondatachannel = function(event) {
                 console.log('ondatachannel:', event.channel);
