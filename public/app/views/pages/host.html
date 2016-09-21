@@ -1,10 +1,14 @@
-<div>
-    <video id="localVideo" autoplay muted></video>
-    <video id="remoteVideo" autoplay></video>
-    <h4>Your room url {{ main.roomUrl }}</h4>
-    <div>
-        <button id="startButton" ng-click="main.startSession()">Start</button>
-        <button id="callButton" ng-click="main.broadcastSession()">Broadcast</button>
-        <button id="hangupButton" ng-click="main.stopSession()">Stop</button>
+<div class="container">
+    <div class="row col-bg-8">
+        <video controls style="width:640px;height:480px;" id="localVideo" autoplay muted></video>
+        <div>
+            <button id="startButton" ng-click="main.startSession()">Start</button>
+            <button id="callButton" ng-click="main.broadcastLocal()">Broadcast</button>
+            <button id="hangupButton" ng-click="main.stopSession()">Stop</button>
+            <button id="playButton" ng-click="main.play()">Play</button>
+        </div>
+    </div>
+    <div class="row col-bg-4">
+        <video style="width:640px;height:480px;" id="remoteVideo" autoplay class="pull-right"></video>
     </div>
 </div>
