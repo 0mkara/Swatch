@@ -15,10 +15,10 @@ angular.module('mainCtrl', ['basicService'])
         audio: true,
         video: {
                 mandatory: {
-                    maxWidth: 1024,
-                    maxHeight: 768,
-                    minWidth: 640,
-                    minHeight: 480
+                    maxWidth: 1920,
+                    maxHeight: 1080,
+                    minWidth: 1054,
+                    minHeight: 768
                 }
             }
     }
@@ -39,6 +39,34 @@ angular.module('mainCtrl', ['basicService'])
         Basics.trace('Requesting local stream');
         startButton.disabled = true;
         grabWebCamVideo();
+    }
+    vm.broadcastLocal = function() {
+        Basics.trace('Starting broadcast to local server');
+        callButton.disabled = true;
+        hangupButton.disabled = false;
+        startTime = window.performance.now();
+        var options = { mimeType: 'video/webm', bitsPerSecond: 100000 };
+        var recordedBlobs = [];
+        try {
+            mediaRecorder = new MediaRecorder(vm.localStream, options);
+        } catch(e0) {
+            console.log('Unable to create MediaRecorder with options Object: ', e0);
+            try {
+                options = {mimeType: 'video/webm,codecs=vp9', bitsPerSecond: 100000};
+                mediaRecorder = new MediaRecorder(vm.localStream, options);
+            } catch(e1) {
+                console.log('Unable to create MediaRecorder with options Object: ', e1);
+                try {
+                    options = 'video/vp8'; // Chrome 47
+                    mediaRecorder = new MediaRecorder(vm.localStream, options);
+                } catch(e2) {
+                    alert('MediaRecorder is not supported by this browser.\n\n' + 'Try Firefox 29 or later, or Chrome 47 or later, with Enable experimental Web Platform features enabled from chrome://flags.');
+                    console.error('Exception while creating MediaRecorder:', e2);
+                    return;
+                }
+            }
+        }
+        console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
     }
     vm.broadcastSession = function() {
         Basics.trace('Starting broadcast to public');
@@ -78,6 +106,15 @@ angular.module('mainCtrl', ['basicService'])
                 console.log('getUserMedia() error: ' + e);
             });
     }
+    function gotStream(stream) {
+        console.log('Received local stream');
+        var streamURL = window.URL.createObjectURL(stream);
+        console.log('getUserMedia video stream URL:', streamURL);
+        document.getElementById('localVideo').srcObject = stream;
+        vm.localStream = stream;
+        document.getElementById('callButton').disabled = false;
+    }
+
     function signalingMessageCallback(message) {
         if (message.type === 'offer') {
             console.log('Got offer. Sending answer to peer.');
@@ -154,14 +191,7 @@ angular.module('mainCtrl', ['basicService'])
         };
         channel.onmessage = (adapter.browserDetails.browser === 'firefox') ? receiveDataFirefoxFactory() : receiveDataChromeFactory();
     }
-    function gotStream(stream) {
-        console.log('Received local stream');
-        var streamURL = window.URL.createObjectURL(stream);
-        console.log('getUserMedia video stream URL:', streamURL);
-        document.getElementById('localVideo').srcObject = stream;
-        vm.localStream = stream;
-        document.getElementById('callButton').disabled = false;
-    }
+
     function randomToken() {
         return Math.floor((1 + Math.random()) * 1e16).toString(16).substring(1);
     }
